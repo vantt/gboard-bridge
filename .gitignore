@@ -1,0 +1,34 @@
+# General
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# Node / JS / Expo
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.expo/
+dist/
+web-build/
+
+# Android
+android-app/android/build/
+android-app/android/app/build/
+android-app/android/.gradle/
+*.iml
+local.properties
+
+# Python (windows-client)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# OS
+Thumbs.db
