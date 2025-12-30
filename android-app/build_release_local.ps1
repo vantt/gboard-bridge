@@ -23,6 +23,10 @@ $ProjectRoot = "d:\_1.FWG_PARA\1.Projects\dev\toys\gboard-bride"
 $ShortPath = "D:\tmp_bride_build"
 $DistDir = "$ProjectRoot\dist"
 
+# Force JDK 17 for local build (since we removed it from gradle.properties for CI)
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
+
+
 Write-Host ">>> Method: Directory Junction (Link) on same drive to bypass Path Limit..."
 Write-Host ">>> Target: $ShortPath"
 
