@@ -70,3 +70,55 @@ Xem chi tiết kiến trúc trong [Product Requirements Document (PRD)](docs/voi
 ---
 
 _Made with ❤️ for faster typing._
+
+---
+
+## 🏗️ Build & Release
+
+### 1. Local Build (Windows)
+
+Để build file `.exe` chạy trên Windows:
+
+1. Mở terminal tại thư mục `windows-client`.
+2. Cài đặt dependencies: `pip install -r requirements.txt`.
+3. Chạy lệnh build:
+   ```powershell
+   python -m PyInstaller --onefile --noconsole --name "GboardBridge" main.py
+   ```
+4. File kết quả sẽ nằm tại `dist/GboardBridge.exe`.
+
+### 2. Local Build (Android)
+
+Build Android trên Windows thường gặp lỗi do đường dẫn quá dài (> 260 ký tự).
+Chúng tôi đã cung cấp script tự động xử lý việc này bằng cách dùng Junction.
+
+1. Chạy script `android-app/build_release_local.ps1` bằng PowerShell:
+   ```powershell
+   cd android-app
+   ./build_release_local.ps1
+   ```
+2. Script sẽ tự động tạo junction, build release, và copy file kết quả ra `dist/GboardBridge.apk`.
+3. Script cũng tự động dọn dẹp sau khi hoàn tất.
+
+### 4. Cài đặt lên điện thoại (USB)
+
+Hỗ trợ cài đặt nhanh qua USB (yêu cầu bật USB Debugging):
+
+- **Cài bản Release** (file `dist/GboardBridge.apk`):
+
+  ```powershell
+  npm run install:release
+  ```
+
+- **Cài bản Debug** (file dev trong `android/app/build/...`):
+  ```powershell
+  npm run install:debug
+  ```
+
+### 3. GitHub Actions (Khuyên dùng)
+
+Dự án đã được cấu hình CI/CD để tự động build khi bạn push tag.
+
+1. Push tag lên GitHub: `git tag v1.0.1 && git push origin v1.0.1`.
+2. Vào tab **Actions** trên GitHub để xem tiến độ.
+3. Tải file `.exe` và `.apk` tại mục **Releases**.

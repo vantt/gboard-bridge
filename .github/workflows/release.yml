@@ -52,11 +52,14 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease
 
+      - name: Rename APK
+        run: mv android-app/android/app/build/outputs/apk/release/app-release.apk android-app/android/app/build/outputs/apk/release/GboardBridge.apk
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: GboardBridge-Android
-          path: android-app/android/app/build/outputs/apk/release/app-release.apk
+          path: android-app/android/app/build/outputs/apk/release/GboardBridge.apk
 
   create-release:
     needs: [build-windows, build-android]
@@ -82,4 +85,4 @@ jobs:
         with:
           files: |
             GboardBridge.exe
-            app-release.apk
+            GboardBridge.apk

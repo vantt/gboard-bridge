@@ -6,7 +6,10 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:release": "powershell -ExecutionPolicy Bypass -File ./build_release_local.ps1",
+    "install:release": "powershell -ExecutionPolicy Bypass -File ./install_via_usb.ps1 -Type Release",
+    "install:debug": "powershell -ExecutionPolicy Bypass -File ./install_via_usb.ps1 -Type Debug"
   },
   "dependencies": {
     "@react-navigation/native": "^6.1.9",

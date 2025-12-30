@@ -1,16 +1,25 @@
+param (
+    [string]$Type = "Release"
+)
+
 $ErrorActionPreference = "Stop"
 
-# Find ADB
-$Adb = "adb"
-try {
-    if ($env:ANDROID_HOME) {
-        $PossibleAdb = Join-Path $env:ANDROID_HOME "platform-tools\adb.exe"
-        if (Test-Path $PossibleAdb) { $Adb = $PossibleAdb }
-    }
-}
-catch {}
+# ... (ADB check remains) ...
 
-$ApkPath = "d:\_1.FWG_PARA\1.Projects\dev\toys\gboard-bride\android-app\android\app\build\outputs\apk\debug\app-debug.apk"
+$ProjectRoot = "d:\_1.FWG_PARA\1.Projects\dev\toys\gboard-bride"
+
+if ($Type -eq "Release") {
+    $ApkPath = "$ProjectRoot\dist\GboardBridge.apk"
+}
+elseif ($Type -eq "Debug") {
+    $ApkPath = "$ProjectRoot\android-app\android\app\build\outputs\apk\debug\app-debug.apk"
+}
+else {
+    Write-Error "Unknown Type: $Type. Use 'Release' or 'Debug'."
+    exit 1
+}
+
+Write-Host ">>> Installing $Type APK from: $ApkPath"
 
 if (-not (Test-Path $ApkPath)) {
     Write-Error "APK not found at: $ApkPath"
