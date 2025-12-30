@@ -23,8 +23,19 @@ $ProjectRoot = "d:\_1.FWG_PARA\1.Projects\dev\toys\gboard-bride"
 $ShortPath = "D:\tmp_bride_build"
 $DistDir = "$ProjectRoot\dist"
 
-# Force JDK 17 for local build (since we removed it from gradle.properties for CI)
-$env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
+# Handle JAVA_HOME dynamically
+if ($env:JAVA_HOME -and (Test-Path $env:JAVA_HOME)) {
+    Write-Host ">>> Using System JAVA_HOME: $env:JAVA_HOME"
+} else {
+    $FallbackJava = "C:\Program Files\Java\jdk-17"
+    if (Test-Path $FallbackJava) {
+        $env:JAVA_HOME = $FallbackJava
+        Write-Host ">>> System JAVA_HOME not found. Fallback to: $FallbackJava"
+    } else {
+        Write-Warning ">>> JAVA_HOME not set and default path ($FallbackJava) not found."
+        Write-Warning ">>> Build might fail if Gradle cannot find JDK 17."
+    }
+}
 
 
 Write-Host ">>> Method: Directory Junction (Link) on same drive to bypass Path Limit..."
