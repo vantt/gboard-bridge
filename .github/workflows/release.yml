@@ -50,12 +50,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "yarn"
-          cache-dependency-path: android-app/yarn.lock
+          cache: "npm"
+          cache-dependency-path: android-app/package-lock.json
 
       - name: Install Dependencies
         working-directory: ./android-app
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Build APK
         working-directory: ./android-app/android
