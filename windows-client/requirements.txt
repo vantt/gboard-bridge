@@ -4,3 +4,4 @@ zeroconf
 pystray
 Pillow
 netifaces
+pyinstaller
