@@ -1,0 +1,6 @@
+pynput
+websockets
+zeroconf
+pystray
+Pillow
+netifaces
