@@ -18,7 +18,7 @@
     Running this script is the recommended way to build the APK locally on Windows.
 #>
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 $ProjectRoot = "d:\_1.FWG_PARA\1.Projects\dev\toys\gboard-bride"
 $ShortPath = "D:\tmp_bride_build"
 $DistDir = "$ProjectRoot\dist"
@@ -32,14 +32,19 @@ if (Test-Path $ShortPath) {
     cmd /c "rmdir $ShortPath"
 }
 
-# Create Junction
-Write-Host ">>> Creating Junction..."
-cmd /c "mklink /J $ShortPath $ProjectRoot"
+# Create Copy (since Junction causes Metro resolution issues)
+Write-Host ">>> Copying project to short path (may take a minute)..."
+# Exclude dist, build, node_modules (optional: node_modules copy is slow but safest)
+# For simplicity and reliability, we copy everything except known huge/unneccessary folders.
+# Actually, robocopy is faster but let's stick to simple PowerShell for now or just Copy-Item.
+# To be safe with node_modules, we MUST copy them or run npm install again.
+# Copying node_modules is faster than install.
+New-Item -ItemType Directory -Path $ShortPath -Force
+Copy-Item "$ProjectRoot\*" "$ShortPath" -Recurse -Force -Exclude "dist","android","ios",".git"
 
-if (-not (Test-Path "$ShortPath\android-app")) {
-    Write-Error "Failed to create junction. Please ensure D: drive is writable."
-    exit 1
-}
+# We must copy android folder
+Copy-Item "$ProjectRoot\android-app" "$ShortPath\android-app" -Recurse -Force
+
 
 # Go to short path
 Write-Host ">>> Switching to Short Path: $ShortPath\android-app\android..."

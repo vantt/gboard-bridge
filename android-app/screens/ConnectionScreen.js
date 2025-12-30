@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Button, Alert, TextInput } from 'react-native';
 import dgram from 'react-native-udp';
 
 export default function ConnectionScreen({ navigation }) {
   const [servers, setServers] = useState([]);
   const [scanning, setScanning] = useState(false);
+  const [manualIp, setManualIp] = useState('');
 
   useEffect(() => {
     // Clean up on unmount
@@ -68,11 +69,41 @@ export default function ConnectionScreen({ navigation }) {
     navigation.navigate('Input', { serverInfo: server });
   };
 
+  const connectManual = () => {
+    if (!manualIp) return;
+    const server = {
+      id: manualIp,
+      name: 'Manual Connection',
+      address: manualIp
+    };
+    connectToPC(server);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Find your PC</Text>
+      <Text style={styles.title}>Find your PC (v1.1)</Text>
       <Text style={styles.subtitle}>Make sure your PC and Phone are on the same WiFi.</Text>
       
+      {/* Manual Connection Section */}
+      <View style={styles.manualContainer}>
+        <Text style={styles.sectionHeader}>Manual Connect</Text>
+        <TextInput 
+          style={styles.input}
+          placeholder="Enter PC IP (e.g. 192.168.1.5)"
+          value={manualIp}
+          onChangeText={setManualIp}
+          keyboardType="numeric"
+        />
+        <Button 
+          title="Connect to IP" 
+          onPress={connectManual} 
+          disabled={!manualIp}
+        />
+      </View>
+
+      <View style={styles.divider} />
+
+      <Text style={styles.sectionHeader}>Discovered Devices</Text>
       <Button 
         title={scanning ? "Scanning..." : "Scan for PC"} 
         onPress={scanForPCs} 
@@ -130,5 +161,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     color: '#999',
+  },
+  manualContainer: {
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  input: {
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 10,
   },
 });

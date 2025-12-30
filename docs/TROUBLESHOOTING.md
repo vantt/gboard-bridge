@@ -13,12 +13,12 @@ This document captures solutions to common issues encountered during the develop
 **Solution**:
 We have created a helper script that uses a **Directory Junction** to shorten the path during build.
 
-- **Run**: `.\fix_build.ps1` (in `android-app` folder).
+- **Run**: `.\android-app\build_release_local.ps1` (formerly `fix_build.ps1`).
 - **What it does**:
-  1.  Creates a temporary junction `D:\tmp_bride_build` pointing to your project.
+  1.  **Copies** the project to a temporary short path `D:\tmp_bride_build` (Copying is safer than Junctions for Metro Bundler).
   2.  Cleans the project.
   3.  Runs the build from the short path.
-  4.  Outputs the APK to the original directory.
+  4.  Outputs the APK to the `dist` directory.
 
 ### 2. Error: "Unsupported class file major version 65" (or 69, etc.)
 
@@ -45,17 +45,21 @@ We have created a helper script that uses a **Directory Junction** to shorten th
 
 ## 📱 Runtime Crashes (On Phone)
 
-### 1. Immediate Crash on Startup ("ClassNotFoundException")
+### 1a. Immediate Crash on Startup ("ClassNotFoundException")
 
 **Symptoms**: App closes immediately. Logcat shows `java.lang.ClassNotFoundException: ...MainApplication`.
 **Cause**: `AndroidManifest.xml` used a relative path (`.MainApplication`) but the Package Name in `build.gradle` didn't match the folder structure.
 **Solution**:
 
-- Use **Fully Qualified Class Names** in `AndroidManifest.xml`:
-  ```xml
-  <application android:name="com.fgcare.voicetypingbridge.MainApplication" ...>
-      <activity android:name="com.fgcare.voicetypingbridge.MainActivity" ...>
-  ```
+- Use **Fully Qualified Class Names** in `AndroidManifest.xml`.
+
+### 1b. Immediate Crash on Startup ("ReferenceError: FormData")
+
+**Symptoms**: App crashes immediately. Logcat shows `ReferenceError: Property 'FormData' doesn't exist`.
+**Cause**: The Release JS environment (Hermes/JSC) is stricter than Debug and may miss global objects like `FormData`.
+**Solution**:
+
+- Create a `polyfills.js` file manually defining `FormData` and import it at the very top of `App.js`.
 
 ### 2. Immediate Crash (Missing Permissions)
 
@@ -83,7 +87,21 @@ We have created a helper script that uses a **Directory Junction** to shorten th
   This bridges the phone's localhost to your PC's localhost.
 - **Then Reload**: Shake phone -> Reload (or press `R` in Metro terminal).
 
----
+### 4. Connection Failed (Release Build Only)
+
+**Symptoms**: App opens but cannot connect to PC (WebSocket), while it works fine in Dev mode.
+**Cause**: Android blocks **Cleartext Traffic** (non-HTTPS/wss) by default in Release builds. Since we use `ws://` (Local Network), it is blocked.
+**Solution**:
+
+- Add `android:usesCleartextTraffic="true"` to the `<application>` tag in `AndroidManifest.xml`.
+
+### 5. UDP Discovery Failed
+
+**Symptoms**: "Scan for PC" finds nothing.
+**Cause**: UDP Broadcast is often blocked by Router isolation or Windows Firewall.
+**Solution**:
+
+- Use the **Manual Connect** feature (v1.1+) to enter the IP address directly.
 
 ## 🚀 Deployment Scripts
 
